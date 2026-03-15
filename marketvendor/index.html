@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Vendor Loan - Empowering Your Market Business to Grow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-brand h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 15px;
+        }
+
+        .nav-menu a:hover {
+            color: #3498db;
+        }
+
+        .apply-btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white !important;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .apply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white !important;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+            background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 70px;
+            min-height: 90vh;
+            background: url('images/bg2.png') center/cover no-repeat;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
+        }
+
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-content {
+            text-align: left;
+        }
+
+        .hero-tagline {
+            color: white;
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            opacity: 0.95;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-headline {
+            font-size: 52px;
+            font-weight: 800;
+            color: white;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-description {
+            font-size: 20px;
+            color: white;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-cta {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 35px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(231, 76, 60, 0.5);
+            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+        }
+
+        .hero-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Information Section */
+        .info-section {
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
+        }
+
+        .info-section::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-container {
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #3498db, #2980b9, #3498db);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .info-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-icon {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .card-icon-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Horizontal layout for cards with image and title */
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-header-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .card-header-text {
+            flex: 1;
+            text-align: left;
+        }
+
+        .card-header-text h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0 0 5px 0;
+        }
+
+        .card-header-text p {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin: 0;
+        }
+
+        .card-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card-content li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+            color: #555;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .card-content li:hover {
+            color: #3498db;
+            transform: translateX(5px);
+        }
+
+        .card-content li:last-child {
+            border-bottom: none;
+        }
+
+        .card-content li i {
+            color: #3498db;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        /* Testimonial Card Special Styling */
+        .testimonial-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .testimonial-card .card-icon {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            box-shadow: 0 8px 20px rgba(243, 156, 18, 0.3);
+        }
+
+        .contact-card {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+        }
+
+        .contact-card .card-header-image {
+            border: 2px solid rgba(46, 125, 50, 0.2);
+        }
+
+        .contact-card .card-header-text h3 {
+            color: #2e7d32;
+        }
+
+        .contact-card .card-header-text p {
+            color: #66bb6a;
+        }
+
+        .contact-card .card-content li i {
+            color: #2e7d32;
+        }
+
+        .vendor-story {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .vendor-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .vendor-info h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .vendor-info p {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: #555;
+            line-height: 1.6;
+            margin-top: 15px;
+            font-size: 16px;
+            padding: 15px;
+            background: rgba(52, 152, 219, 0.05);
+            border-left: 3px solid #3498db;
+            border-radius: 6px;
+        }
+
+        /* Mobile Responsive */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+                border-radius: 0 0 20px 20px;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 40px;
+            }
+
+            .hero-content {
+                text-align: center;
+            }
+
+            .hero-headline {
+                font-size: 36px;
+            }
+
+            .hero-description {
+                font-size: 16px;
+            }
+
+            .info-cards {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-brand">
+                <img src="images/loo.png" alt="Market Vendor Loan Logo" class="nav-logo">
+                <h1>Market Vendor Loan</h1>
+            </a>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#about">Testimonials</a></li>
+                <li><a href="#about">Contact Us</a></li>
+                <li><a href="register.php" class="apply-btn">Apply Now</a></li>
+                <li><a href="login.php" class="login-btn">Login / Sign Up</a></li>
+                
+            </ul>
+            
+            <button class="mobile-menu-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-tagline">Empowering Your Market Business to Grow</div>
+                <h1 class="hero-headline">FAST. FLEXIBLE. SECURE LOANS FOR VENDORS</h1>
+                <p class="hero-description">
+                    Expand your stall, stock more goods, and boost your sales. Simple applications, quick approvals, tailored for you.
+                </p>
+                <a href="register.php" class="hero-cta">APPLY FOR A LOAN NOW</a>
+            </div>
+  
+        </div>
+    </section>
+
+    <!-- Information Section -->
+    <section class="info-section" id="about">
+        <div class="info-container">
+            <div class="info-cards">
+                <!-- How It Works Card -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <img src="images/1.png" alt="How It Works" class="card-header-image">
+                        <div class="card-header-text">
+                            <h3>How It Works</h3>
+                            <p>Simple process to get your loan</p>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> Apply Online</li>
+                            <li><i class="fas fa-check-circle"></i> Fast Review</li>
+                            <li><i class="fas fa-check-circle"></i> Get Funds</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Benefits Card -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <img src="images/2.png" alt="Benefits" class="card-header-image">
+                        <div class="card-header-text">
+                            <h3>Benefits</h3>
+                            <p>Why choose our loan service</p>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> Quick Approvals</li>
+                            <li><i class="fas fa-check-circle"></i> Competitive Rates</li>
+                            <li><i class="fas fa-check-circle"></i> Flexible Repayment</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Vendor Stories Card -->
+                <div class="info-card testimonial-card">
+                    <div class="card-header">
+                        <img src="images/3.png" alt="Vendor Stories" class="card-header-image">
+                        <div class="card-header-text">
+                            <h3>Vendor Stories</h3>
+                            <p>Success stories from our clients</p>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="vendor-story">
+                            <img src="images/profile.png" alt="Maria Santos" class="vendor-photo">
+                            <div class="vendor-info">
+                                <h4>Maria Santos</h4>
+                                <p>Fruit Vendor</p>
+                            </div>
+                        </div>
+                        <p class="testimonial-text">
+                            "Market Vendor Loan helped me expand my fruit stand. I now have twice the customers!"
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Contact Us Card -->
+                <div class="info-card contact-card">
+                    <div class="card-header">
+                        <img src="images/4.png" alt="Contact Us" class="card-header-image">
+                        <div class="card-header-text">
+                            <h3>Contact Us</h3>
+                            <p>Get in touch with our team</p>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li><i class="fas fa-phone"></i> +63 912 345 6789</li>
+                            <li><i class="fas fa-envelope"></i> info@marketvendorloan.com</li>
+                            <li><i class="fas fa-map-marker-alt"></i> Manila, Philippines</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

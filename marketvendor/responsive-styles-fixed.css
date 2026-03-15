@@ -1,0 +1,602 @@
+/* =====================================================
+   ENHANCED RESPONSIVE DESIGN FIXES
+   ===================================================== */
+   /* This file fixes responsive layout issues for full screen utilization */
+
+/* =====================================================
+   LAYOUT STRUCTURE FIXES
+   ===================================================== */
+
+/* Ensure full height layout */
+html, body {
+   height: 100%;
+   margin: 0;
+   padding: 0;
+}
+
+.layout {
+   display: flex;
+   min-height: 100vh;
+   width: 100%;
+   position: relative;
+}
+
+/* =====================================================
+   SIDEBAR FIXES
+   ===================================================== */
+
+/* Desktop sidebar - ensure full height */
+.sidebar {
+   position: fixed;
+   width: 260px;
+   top: 0;
+   left: 0;
+   bottom: 0;
+   background: var(--bg-850);
+   border-right: 1px solid var(--line);
+   padding: 22px 16px;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   height: 100vh;
+   overflow-y: auto;
+   z-index: 100;
+}
+
+/* Content area - proper margin accounting */
+.content-wrap {
+   margin-left: 260px;
+   padding: 0;
+   width: calc(100% - 260px);
+   min-height: 100vh;
+   display: flex;
+   flex-direction: column;
+}
+
+/* =====================================================
+   MOBILE BREAKPOINT (480px and below)
+   ===================================================== */
+@media (max-width: 480px) {
+   
+   /* Layout Structure */
+   .layout {
+      flex-direction: column;
+   }
+   
+   /* Sidebar - Mobile */
+   .sidebar {
+      width: 260px;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+      z-index: 1000;
+      position: fixed;
+      height: 100vh;
+   }
+   
+   .sidebar.mobile-open {
+      transform: translateX(0);
+      width: 260px;
+   }
+   
+   /* Content Area - Mobile */
+   .content-wrap {
+      margin-left: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+   }
+   
+   /* Header - Mobile */
+   .header {
+      padding: 12px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      width: 100%;
+   }
+   
+   /* Main Content - Mobile */
+   main {
+      padding: 16px;
+      width: 100%;
+      flex: 1;
+   }
+   
+   /* Mobile Menu Toggle */
+   .mobile-menu-toggle {
+      display: block;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1001;
+      background: var(--bg-700);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      color: var(--text-100);
+      font-size: 16px;
+      width: 44px;
+      height: 44px;
+   }
+   
+   .mobile-menu-toggle:hover {
+      background: var(--bg-600);
+   }
+}
+
+/* =====================================================
+   TABLET BREAKPOINT (481px to 768px)
+   ===================================================== */
+@media (min-width: 481px) and (max-width: 768px) {
+   
+   /* Sidebar - Tablet */
+   .sidebar {
+      width: 260px;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+      z-index: 1000;
+      position: fixed;
+      height: 100vh;
+   }
+   
+   .sidebar.tablet-open {
+      transform: translateX(0);
+      width: 260px;
+   }
+   
+   /* Content Area - Tablet */
+   .content-wrap {
+      margin-left: 0;
+      padding: 0 16px;
+      width: 100%;
+      min-height: 100vh;
+   }
+   
+   /* Tablet Menu Toggle */
+   .mobile-menu-toggle {
+      display: block;
+   }
+   
+   /* Main Content - Tablet */
+   main {
+      padding: 20px;
+      width: 100%;
+      flex: 1;
+   }
+}
+
+/* =====================================================
+   LAPTOP BREAKPOINT (769px to 1024px)
+   ===================================================== */
+@media (min-width: 769px) and (max-width: 1024px) {
+   
+   /* Hide Mobile Toggle */
+   .mobile-menu-toggle {
+      display: none;
+   }
+   
+   /* Restore Desktop Sidebar */
+   .sidebar {
+      width: 260px;
+      transform: translateX(0);
+      position: fixed;
+      height: 100vh;
+   }
+   
+   /* Content Area - Laptop */
+   .content-wrap {
+      margin-left: 260px;
+      padding: 0 20px;
+      width: calc(100% - 260px);
+      min-height: 100vh;
+   }
+   
+   /* Main Content - Laptop */
+   main {
+      padding: 22px;
+      width: 100%;
+      flex: 1;
+   }
+}
+
+/* =====================================================
+   DESKTOP BREAKPOINT (1025px and above)
+   ===================================================== */
+@media (min-width: 1025px) {
+   
+   /* Hide Mobile Toggle */
+   .mobile-menu-toggle {
+      display: none;
+   }
+   
+   /* Desktop Sidebar */
+   .sidebar {
+      width: 260px;
+      transform: translateX(0);
+      position: fixed;
+      height: 100vh;
+   }
+   
+   /* Content Area - Desktop */
+   .content-wrap {
+      margin-left: 260px;
+      padding: 0 24px;
+      width: calc(100% - 260px);
+      min-height: 100vh;
+   }
+   
+   /* Main Content - Desktop */
+   main {
+      padding: 24px;
+      width: 100%;
+      flex: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+   }
+}
+
+/* =====================================================
+   VERY SMALL SCREENS (320px to 379px)
+   ===================================================== */
+@media (max-width: 379px) {
+   
+   /* Ultra-compact Layout */
+   .sidebar {
+      width: 240px;
+   }
+   
+   .sidebar.mobile-open {
+      width: 240px;
+   }
+   
+   .content-wrap {
+      width: 100%;
+      margin-left: 0;
+   }
+   
+   main {
+      padding: 12px;
+      width: 100%;
+   }
+   
+   .header {
+      padding: 8px 12px;
+   }
+   
+   .mobile-menu-toggle {
+      top: 10px;
+      left: 10px;
+      padding: 8px;
+      width: 40px;
+      height: 40px;
+      font-size: 14px;
+   }
+}
+
+/* =====================================================
+   GRID SYSTEM FIXES
+   ===================================================== */
+
+/* Ensure grids use full available width */
+.grid-4, .grid-3, .grid-2, .stats-grid, .actions-grid {
+   width: 100%;
+   display: grid;
+}
+
+/* Mobile grids */
+@media (max-width: 480px) {
+   .grid-4,
+   .grid-3,
+   .grid-2,
+   .stats-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+   }
+   
+   .actions-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+   }
+}
+
+/* Tablet grids */
+@media (min-width: 481px) and (max-width: 768px) {
+   .grid-4 {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+   }
+   
+   .grid-3 {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+   }
+   
+   .grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+   }
+   
+   .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+   }
+   
+   .actions-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+   }
+}
+
+/* Laptop grids */
+@media (min-width: 769px) and (max-width: 1024px) {
+   .grid-4 {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+   }
+   
+   .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+   }
+   
+   .grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+   }
+   
+   .stats-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+   }
+   
+   .actions-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+   }
+}
+
+/* Desktop grids */
+@media (min-width: 1025px) {
+   .grid-4 {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+   }
+   
+   .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+   }
+   
+   .grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+   }
+   
+   .stats-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+   }
+   
+   .actions-grid {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+   }
+}
+
+/* =====================================================
+   CARD AND CONTENT FIXES
+   ===================================================== */
+
+.card {
+   width: 100%;
+   background: linear-gradient(180deg, rgba(14, 39, 75, 0.95), rgba(10, 29, 58, 0.95));
+   border: 1px solid var(--line);
+   border-radius: var(--card-radius);
+   padding: 16px;
+   box-sizing: border-box;
+}
+
+/* Mobile cards */
+@media (max-width: 480px) {
+   .card {
+      padding: 12px;
+      margin-bottom: 12px;
+   }
+}
+
+/* Tablet cards */
+@media (min-width: 481px) and (max-width: 768px) {
+   .card {
+      padding: 14px;
+      margin-bottom: 16px;
+   }
+}
+
+/* =====================================================
+   TABLE RESPONSIVENESS FIXES
+   ===================================================== */
+
+.table-responsive {
+   width: 100%;
+   overflow-x: auto;
+   -webkit-overflow-scrolling: touch;
+   border-radius: 8px;
+   border: 1px solid var(--line);
+}
+
+table {
+   width: 100%;
+   border-collapse: collapse;
+   font-size: .85rem;
+   margin-top: 8px;
+   min-width: 600px;
+}
+
+/* Mobile tables */
+@media (max-width: 480px) {
+   table {
+      font-size: .75rem;
+      min-width: 500px;
+   }
+   
+   th, td {
+      padding: 6px 4px;
+      font-size: .75rem;
+   }
+}
+
+/* =====================================================
+   FORM RESPONSIVENESS FIXES
+   ===================================================== */
+
+form {
+   width: 100%;
+   max-width: 100%;
+   box-sizing: border-box;
+}
+
+input, select, textarea {
+   width: 100%;
+   background: #081a34;
+   color: var(--text-100);
+   border: 1px solid var(--line);
+   border-radius: 8px;
+   padding: 9px 10px;
+   font-size: .9rem;
+   box-sizing: border-box;
+}
+
+button {
+   background: var(--bg-600);
+   color: var(--text-100);
+   border: 1px solid #3f6daa;
+   border-radius: 8px;
+   padding: 9px 12px;
+   cursor: pointer;
+   box-sizing: border-box;
+}
+
+/* Mobile forms */
+@media (max-width: 480px) {
+   input, select, textarea {
+      padding: 8px;
+      font-size: .9rem;
+   }
+   
+   button {
+      padding: 8px 12px;
+      font-size: .9rem;
+      width: 100%;
+   }
+}
+
+/* =====================================================
+   QUICK ACTIONS RESPONSIVENESS
+   ===================================================== */
+
+.quick-actions {
+   width: 100%;
+   background: rgba(30, 41, 59, 0.95);
+   border: 1px solid rgba(148, 163, 184, 0.2);
+   border-radius: 12px;
+   padding: 24px;
+   box-sizing: border-box;
+}
+
+/* Mobile quick actions */
+@media (max-width: 480px) {
+   .quick-actions {
+      padding: 16px;
+   }
+   
+   .action-btn {
+      padding: 16px;
+      font-size: .85rem;
+      text-align: center;
+   }
+}
+
+/* =====================================================
+   HEADER AND NAVIGATION FIXES
+   ===================================================== */
+
+.header {
+   width: 100%;
+   position: sticky;
+   top: 0;
+   z-index: 3;
+   backdrop-filter: blur(6px);
+   background: rgba(8, 22, 45, 0.9);
+   border-bottom: 1px solid var(--line);
+   padding: 16px 26px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   gap: 10px;
+   box-sizing: border-box;
+}
+
+/* Mobile header */
+@media (max-width: 480px) {
+   .header {
+      padding: 12px 16px;
+   }
+}
+
+/* =====================================================
+   FULL SCREEN UTILIZATION FIXES
+   ===================================================== */
+
+/* Ensure no horizontal scrolling */
+body {
+   overflow-x: hidden;
+   max-width: 100vw;
+}
+
+/* Ensure proper viewport meta tag is respected */
+@viewport {
+   width: device-width;
+}
+
+/* Fix for iOS Safari */
+@supports (-webkit-touch-callout: none) {
+   .sidebar {
+      -webkit-overflow-scrolling: touch;
+   }
+}
+
+/* Fix for Android browsers */
+@supports (-webkit-appearance: none) {
+   input, select, textarea {
+      -webkit-appearance: none;
+      appearance: none;
+      border-radius: 0;
+   }
+}
+
+/* =====================================================
+   VISUAL DEBUGGING AIDS (Remove in production)
+   ===================================================== */
+
+/*
+.debug-border {
+   border: 2px solid red !important;
+}
+
+.debug-bg {
+   background: rgba(255, 0, 0, 0.1) !important;
+}
+
+.sidebar.debug-border {
+   border: 2px solid blue !important;
+}
+
+.content-wrap.debug-border {
+   border: 2px solid green !important;
+}
+
+main.debug-border {
+   border: 2px solid yellow !important;
+}
+*/
