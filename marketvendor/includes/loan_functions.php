@@ -111,6 +111,19 @@ class LoanManager {
     }
     
     /**
+     * Generate unique payment ID
+     */
+    private function generatePaymentId($loan_id, $sequence) {
+        do {
+            $payment_id = 'PAY' . date('YmdHis') . str_pad(mt_rand(100, 999), 3, '0', STR_PAD_LEFT) . str_pad($sequence, 3, '0', STR_PAD_LEFT);
+            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM payment_schedules WHERE payment_id = ?");
+            $stmt->execute([$payment_id]);
+            $count = $stmt->fetch()['count'];
+        } while ($count > 0);
+        
+        return $payment_id;
+    }
+    /**
      * Generate payment schedule for approved loan
      */
     private function generatePaymentSchedule($loan_id, $loan, $total_amount, $first_payment_date) {
@@ -144,7 +157,7 @@ class LoanManager {
                 (payment_id, loan_id, user_id, borrower_name, due_date, principal_amount, interest_amount, total_amount, status) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')");
             
-            $payment_id = 'PAY' . date('YmdHis') . str_pad($i + 1, 3, '0', STR_PAD_LEFT);
+            $payment_id = $this->generatePaymentId($loan_id, $i + 1);
             $principal_amount = $loan['loan_amount'] / $payment_count;
             $interest_amount = ($total_amount - $loan['loan_amount']) / $payment_count;
             

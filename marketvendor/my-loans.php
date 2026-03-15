@@ -1054,10 +1054,6 @@ $user_info = $stmt->fetch(PDO::FETCH_ASSOC);
                 <!-- Statistics Cards -->
                 <div class="stats-grid">
 
-                    <div class="stat-card">
-                        <div class="stat-value"><?php echo $active_loans; ?></div>
-                        <div class="stat-label">Active Loans</div>
-                    </div>
                                         <div class="stat-card">
                         <div class="stat-value">₱<?php echo number_format($total_amount, 0); ?></div>
                         <div class="stat-label">Total Amount of Loan</div>

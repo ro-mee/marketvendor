@@ -1479,10 +1479,7 @@ $monthly_data = $monthly_stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="stat-value">₱<?php echo number_format($stats['pending_amount'] ?? 0, 2); ?></div>
                         <div class="stat-label">Pending Amount</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value">₱<?php echo number_format($stats['failed_amount'] ?? 0, 2); ?></div>
-                        <div class="stat-label">Failed Amount</div>
-                    </div>
+     
                 </div>
 
                 <!-- Payments Table -->

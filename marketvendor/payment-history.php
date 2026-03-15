@@ -954,21 +954,15 @@ $today_stats = $stmt->fetch(PDO::FETCH_ASSOC);
             if (paymentData) {
                 // Create receipt HTML
                 const receiptHTML = `
-                    <div class="receipt-container">
-                        <div class="receipt-header">
-                            <h1>PAYMENT RECEIPT</h1>
-                            <div class="company-name">Market Vendor Loan System</div>
+                    <div class="receipt-section">
+                        <div class="receipt-row">
+                            <span class="label">Receipt No:</span>
+                            <span class="value">RCP${paymentData.paymentId.replace('PAY', '')}</span>
                         </div>
-                        
-                        <div class="receipt-section">
-                            <div class="receipt-row">
-                                <span class="label">Receipt No:</span>
-                                <span class="value">RCP${paymentData.paymentId.replace('PAY', '')}</span>
-                            </div>
-                            <div class="receipt-row">
-                                <span class="label">Payment ID:</span>
-                                <span class="value">${paymentData.paymentId}</span>
-                            </div>
+                        <div class="receipt-row">
+                            <span class="label">Payment ID:</span>
+                            <span class="value">${paymentData.paymentId}</span>
+                        </div>
                             <div class="receipt-row">
                                 <span class="label">Loan ID:</span>
                                 <span class="value">${paymentData.loanId}</span>

@@ -18,69 +18,77 @@ $error_message = '';
 // Handle profile update
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $phone = $_POST['phone'] ?? '';
-        $address = $_POST['address'] ?? '';
-        $current_password = $_POST['current_password'] ?? '';
-        $new_password = $_POST['new_password'] ?? '';
-        $confirm_password = $_POST['confirm_password'] ?? '';
+        // Check which form was submitted
+        $form_type = $_POST['form_type'] ?? '';
         
-        // Update basic info
-        if ($phone || $address) {
-            $stmt = $db->prepare("UPDATE users SET phone = ?, address = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-            $stmt->execute([$phone, $address, $user_id]);
-            $success_message = "Profile updated successfully!";
-        }
-        
-        // Update password
-        if ($current_password && $new_password) {
-            // Verify current password
-            $stmt = $db->prepare("SELECT password FROM users WHERE id = ?");
-            $stmt->execute([$user_id]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($form_type === 'personal_info') {
+            // Handle personal information update
+            $phone = $_POST['phone'] ?? '';
+            $address = $_POST['address'] ?? '';
             
-            if (password_verify($current_password, $user['password'])) {
-                if ($new_password === $confirm_password) {
-                    // Enhanced password validation
-                    $password_errors = [];
-                    
-                    // Check minimum length
-                    if (strlen($new_password) < 8) {
-                        $password_errors[] = "Password must be at least 8 characters long.";
-                    }
-                    
-                    // Check for uppercase letter
-                    if (!preg_match('/[A-Z]/', $new_password)) {
-                        $password_errors[] = "Password must contain at least one uppercase letter.";
-                    }
-                    
-                    // Check for lowercase letter
-                    if (!preg_match('/[a-z]/', $new_password)) {
-                        $password_errors[] = "Password must contain at least one lowercase letter.";
-                    }
-                    
-                    // Check for at least one number
-                    if (!preg_match('/[0-9]/', $new_password)) {
-                        $password_errors[] = "Password must contain at least one number.";
-                    }
-                    
-                    // Check for at least one special character
-                    if (!preg_match('/[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]/', $new_password)) {
-                        $password_errors[] = "Password must contain at least one special character.";
-                    }
-                    
-                    if (empty($password_errors)) {
-                        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-                        $stmt = $db->prepare("UPDATE users SET password = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-                        $stmt->execute([$hashed_password, $user_id]);
-                        $success_message .= " Password updated successfully!";
+            if ($phone || $address) {
+                $stmt = $db->prepare("UPDATE users SET phone = ?, address = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+                $stmt->execute([$phone, $address, $user_id]);
+                $success_message = "Personal information updated successfully!";
+            }
+        } elseif ($form_type === 'security_settings') {
+            // Handle security settings update
+            $current_password = $_POST['current_password'] ?? '';
+            $new_password = $_POST['new_password'] ?? '';
+            $confirm_password = $_POST['confirm_password'] ?? '';
+            
+            if ($current_password && $new_password) {
+                // Verify current password
+                $stmt = $db->prepare("SELECT password FROM users WHERE id = ?");
+                $stmt->execute([$user_id]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if (password_verify($current_password, $user['password'])) {
+                    if ($new_password === $confirm_password) {
+                        // Enhanced password validation
+                        $password_errors = [];
+                        
+                        // Check minimum length
+                        if (strlen($new_password) < 8) {
+                            $password_errors[] = "Password must be at least 8 characters long.";
+                        }
+                        
+                        // Check for uppercase letter
+                        if (!preg_match('/[A-Z]/', $new_password)) {
+                            $password_errors[] = "Password must contain at least one uppercase letter.";
+                        }
+                        
+                        // Check for lowercase letter
+                        if (!preg_match('/[a-z]/', $new_password)) {
+                            $password_errors[] = "Password must contain at least one lowercase letter.";
+                        }
+                        
+                        // Check for at least one number
+                        if (!preg_match('/[0-9]/', $new_password)) {
+                            $password_errors[] = "Password must contain at least one number.";
+                        }
+                        
+                        // Check for at least one special character
+                        if (!preg_match('/[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/ ?]/', $new_password)) {
+                            $password_errors[] = "Password must contain at least one special character.";
+                        }
+                        
+                        if (empty($password_errors)) {
+                            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                            $stmt = $db->prepare("UPDATE users SET password = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+                            $stmt->execute([$hashed_password, $user_id]);
+                            $success_message = "Password updated successfully!";
+                        } else {
+                            $error_message = implode(" ", $password_errors);
+                        }
                     } else {
-                        $error_message = implode(" ", $password_errors);
+                        $error_message = "New passwords do not match.";
                     }
                 } else {
-                    $error_message = "New passwords do not match.";
+                    $error_message = "Current password is incorrect.";
                 }
             } else {
-                $error_message = "Current password is incorrect.";
+                $error_message = "Please fill in all password fields.";
             }
         }
         
@@ -486,20 +494,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: var(--danger);
         }
 
-        @media (max-width: 768px) {
-            .form-container {
-                padding: 20px;
+        .validation-message {
+            display: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border: 1px solid;
+            font-size: 0.875rem;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .validation-message.show {
+            display: flex;
+        }
+
+        .validation-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .validation-message.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .validation-message.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .field-error {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+        }
+
+        .field-success {
+            border-color: #22c55e !important;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1) !important;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
             }
-            
-            .form-row {
-                grid-template-columns: 1fr;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
-            
-            .section-header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: stretch;
-            }
+        }
+
+        .validation-message.show {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .btn-primary.loading .loading-spinner {
+            display: inline-block;
+        }
+
+        .btn-primary.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -574,9 +653,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <div class="form-container">
-                <form method="POST">
-                    <div class="profile-layout">
-                        <!-- Personal Information -->
+                <div class="profile-layout">
+                    <!-- Personal Information Form -->
+                    <form method="POST" id="personalInfoForm">
+                        <input type="hidden" name="form_type" value="personal_info">
+                        
+                        <div class="validation-message" id="personalInfoValidation">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span class="message-text"></span>
+                        </div>
+                        
                         <div class="form-section">
                             <h3><i class="fas fa-user"></i> Personal Information</h3>
                             <div class="form-group">
@@ -595,11 +681,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="address">Address</label>
                                 <textarea id="address" name="address" rows="3" placeholder="Enter your address"><?php echo htmlspecialchars($user_data['address'] ?? ''); ?></textarea>
                             </div>
+                            
+                            <button type="submit" class="btn-primary" id="personalInfoSubmit">
+                                <span class="btn-text"><i class="fas fa-save"></i> Save Personal Information</span>
+                                <div class="loading-spinner"></div>
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="resetPersonalInfoForm()">
+                                <i class="fas fa-undo"></i> Reset
+                            </button>
                         </div>
+                    </form>
 
-                        <!-- Security Settings -->
+                    <!-- Security Settings Form -->
+                    <form method="POST" id="securityForm">
+                        <input type="hidden" name="form_type" value="security_settings">
+                        
+                        <div class="validation-message" id="securityValidation">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span class="message-text"></span>
+                        </div>
+                        
                         <div class="form-section">
                             <h3><i class="fas fa-lock"></i> Security Settings</h3>
+                            
+                            <div class="password-requirements">
+                                <h4>Password Requirements:</h4>
+                                <div class="requirement">
+                                    <i class="fas fa-times-circle"></i>
+                                    <i class="fas fa-check-circle"></i>
+                                    At least 8 characters long
+                                </div>
+                                <div class="requirement">
+                                    <i class="fas fa-times-circle"></i>
+                                    <i class="fas fa-check-circle"></i>
+                                    Contains uppercase letter (A-Z)
+                                </div>
+                                <div class="requirement">
+                                    <i class="fas fa-times-circle"></i>
+                                    <i class="fas fa-check-circle"></i>
+                                    Contains lowercase letter (a-z)
+                                </div>
+                                <div class="requirement">
+                                    <i class="fas fa-times-circle"></i>
+                                    <i class="fas fa-check-circle"></i>
+                                    Contains number (0-9)
+                                </div>
+                                <div class="requirement">
+                                    <i class="fas fa-times-circle"></i>
+                                    <i class="fas fa-check-circle"></i>
+                                    Contains special character (!@#$%^&*...)
+                                </div>
+                            </div>
+                            
                             <div class="form-group">
                                 <label for="current_password">Current Password</label>
                                 <input type="password" id="current_password" name="current_password" placeholder="Enter your current password">
@@ -607,24 +740,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="form-group">
                                 <label for="new_password">New Password</label>
                                 <input type="password" id="new_password" name="new_password" placeholder="Enter your new password">
-                                <small>Minimum 8 characters with at least one uppercase, lowercase, number, and special character</small>
                             </div>
                             <div class="form-group">
                                 <label for="confirm_password">Confirm New Password</label>
                                 <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your new password">
                             </div>
+                            
+                            <button type="submit" class="btn-primary" id="securitySubmit">
+                                <span class="btn-text"><i class="fas fa-shield-alt"></i> Update Security Settings</span>
+                                <div class="loading-spinner"></div>
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="resetSecurityForm()">
+                                <i class="fas fa-undo"></i> Clear
+                            </button>
                         </div>
-
-                    <!-- Submit Buttons -->
-                    <div class="form-section" style="background: transparent; border: none; padding: 0;">
-                        <button type="submit" class="btn-primary">
-                            <i class="fas fa-save"></i> Save Changes
-                        </button>
-                        <button type="button" class="btn-secondary" onclick="window.location.href='dashboard.php'">
-                            <i class="fas fa-times"></i> Cancel
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
             </main>
         </div>
@@ -632,66 +763,176 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="responsive-script.js"></script>
 
     <script>
-        // Form validation
-        document.querySelector('form').addEventListener('submit', function(e) {
+        // Validation helper functions
+        function showValidationMessage(elementId, message, type = 'error') {
+            const validationElement = document.getElementById(elementId);
+            const messageText = validationElement.querySelector('.message-text');
+            const icon = validationElement.querySelector('i');
+            
+            // Remove all classes
+            validationElement.classList.remove('error', 'success', 'info');
+            
+            // Add new classes
+            validationElement.classList.add(type, 'show');
+            messageText.textContent = message;
+            
+            // Update icon
+            icon.className = type === 'success' ? 'fas fa-check-circle' : 
+                            type === 'info' ? 'fas fa-info-circle' : 
+                            'fas fa-exclamation-circle';
+            
+            // Auto hide after 5 seconds for success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    validationElement.classList.remove('show');
+                }, 5000);
+            }
+        }
+        
+        function hideValidationMessage(elementId) {
+            const validationElement = document.getElementById(elementId);
+            validationElement.classList.remove('show');
+        }
+        
+        function setFieldError(fieldId, isError = true) {
+            const field = document.getElementById(fieldId);
+            if (isError) {
+                field.classList.add('field-error');
+                field.classList.remove('field-success');
+            } else {
+                field.classList.add('field-success');
+                field.classList.remove('field-error');
+            }
+        }
+        
+        function clearFieldErrors(...fieldIds) {
+            fieldIds.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                field.classList.remove('field-error', 'field-success');
+            });
+        }
+        
+        function setButtonLoading(buttonId, loading = true) {
+            const button = document.getElementById(buttonId);
+            if (loading) {
+                button.classList.add('loading');
+                button.disabled = true;
+            } else {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+
+        // Personal Information Form Validation
+        document.getElementById('personalInfoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const phone = document.getElementById('phone').value.trim();
+            const address = document.getElementById('address').value.trim();
+            
+            // Clear previous validation
+            clearFieldErrors('phone', 'address');
+            hideValidationMessage('personalInfoValidation');
+            
+            // Validate at least one field is filled
+            if (!phone && !address) {
+                showValidationMessage('personalInfoValidation', 'Please enter either a phone number or address to update.', 'error');
+                return;
+            }
+            
+            // Validate phone format if provided
+            if (phone && !/^[\d\s\-\+\(\)]+$/.test(phone)) {
+                setFieldError('phone', true);
+                showValidationMessage('personalInfoValidation', 'Please enter a valid phone number.', 'error');
+                return;
+            }
+            
+            // Show loading state
+            setButtonLoading('personalInfoSubmit', true);
+            
+            // Submit form
+            this.submit();
+        });
+        
+        // Security Form Validation
+        document.getElementById('securityForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
             const currentPassword = document.getElementById('current_password').value;
             const newPassword = document.getElementById('new_password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
             
-            // If password fields are filled, validate them
-            if (currentPassword || newPassword || confirmPassword) {
-                if (!currentPassword) {
-                    alert('Please enter your current password.');
-                    e.preventDefault();
-                    return;
-                }
-                
-                if (!newPassword) {
-                    alert('Please enter a new password.');
-                    e.preventDefault();
-                    return;
-                }
-                
-                if (newPassword !== confirmPassword) {
-                    alert('New passwords do not match.');
-                    e.preventDefault();
-                    return;
-                }
-                
-                // Enhanced password validation
-                const passwordErrors = [];
-                
-                // Check minimum length
-                if (newPassword.length < 8) {
-                    passwordErrors.push("Password must be at least 8 characters long.");
-                }
-                
-                // Check for uppercase letter
-                if (!/[A-Z]/.test(newPassword)) {
-                    passwordErrors.push("Password must contain at least one uppercase letter.");
-                }
-                
-                // Check for lowercase letter
-                if (!/[a-z]/.test(newPassword)) {
-                    passwordErrors.push("Password must contain at least one lowercase letter.");
-                }
-                
-                // Check for at least one number
-                if (!/[0-9]/.test(newPassword)) {
-                    passwordErrors.push("Password must contain at least one number.");
-                }
-                
-                // Check for at least one special character
-                if (!/[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]/.test(newPassword)) {
-                    passwordErrors.push("Password must contain at least one special character.");
-                }
-                
-                if (passwordErrors.length > 0) {
-                    alert(passwordErrors.join("\n"));
-                    e.preventDefault();
-                    return;
-                }
+            // Clear previous validation
+            clearFieldErrors('current_password', 'new_password', 'confirm_password');
+            hideValidationMessage('securityValidation');
+            
+            // Validate all password fields are filled
+            let hasError = false;
+            let errorMessage = '';
+            
+            if (!currentPassword) {
+                setFieldError('current_password', true);
+                errorMessage = 'Please enter your current password.';
+                hasError = true;
             }
+            
+            if (!newPassword) {
+                setFieldError('new_password', true);
+                errorMessage = errorMessage ? 'Please fill in all password fields.' : 'Please enter a new password.';
+                hasError = true;
+            }
+            
+            if (!confirmPassword) {
+                setFieldError('confirm_password', true);
+                errorMessage = errorMessage ? 'Please fill in all password fields.' : 'Please confirm your new password.';
+                hasError = true;
+            }
+            
+            if (hasError) {
+                showValidationMessage('securityValidation', errorMessage, 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                setFieldError('confirm_password', true);
+                showValidationMessage('securityValidation', 'New passwords do not match.', 'error');
+                return;
+            }
+            
+            // Enhanced password validation
+            const passwordErrors = [];
+            
+            if (newPassword.length < 8) {
+                passwordErrors.push("At least 8 characters long");
+            }
+            
+            if (!/[A-Z]/.test(newPassword)) {
+                passwordErrors.push("Contains uppercase letter (A-Z)");
+            }
+            
+            if (!/[a-z]/.test(newPassword)) {
+                passwordErrors.push("Contains lowercase letter (a-z)");
+            }
+            
+            if (!/[0-9]/.test(newPassword)) {
+                passwordErrors.push("Contains number (0-9)");
+            }
+            
+            if (!/[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/ ?]/.test(newPassword)) {
+                passwordErrors.push("Contains special character");
+            }
+            
+            if (passwordErrors.length > 0) {
+                setFieldError('new_password', true);
+                showValidationMessage('securityValidation', 'Password must meet all requirements: ' + passwordErrors.join(', ') + '.', 'error');
+                return;
+            }
+            
+            // Show loading state
+            setButtonLoading('securitySubmit', true);
+            
+            // Submit form
+            this.submit();
         });
         
         // Real-time password validation feedback
@@ -704,7 +945,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 uppercase: /[A-Z]/.test(password),
                 lowercase: /[a-z]/.test(password),
                 number: /[0-9]/.test(password),
-                special: /[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]/.test(password)
+                special: /[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/ ?]/.test(password)
             };
             
             return requirements;
@@ -730,23 +971,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         newPasswordInput.addEventListener('input', function() {
             updatePasswordRequirements(this.value);
+            
+            // Clear validation message when user starts typing
+            if (this.value.length > 0) {
+                hideValidationMessage('securityValidation');
+                clearFieldErrors('new_password');
+            }
         });
         
         confirmPasswordInput.addEventListener('input', function() {
             if (this.value && this.value !== newPasswordInput.value) {
                 this.setCustomValidity('Passwords do not match');
+                setFieldError('confirm_password', true);
             } else {
                 this.setCustomValidity('');
+                clearFieldErrors('confirm_password');
             }
         });
-                }
-            }
-        });
+        
+        // Reset form functions
+        function resetPersonalInfoForm() {
+            document.getElementById('phone').value = '<?php echo htmlspecialchars($user_data['phone'] ?? ''); ?>';
+            document.getElementById('address').value = '<?php echo htmlspecialchars($user_data['address'] ?? ''); ?>';
+            clearFieldErrors('phone', 'address');
+            hideValidationMessage('personalInfoValidation');
+        }
+        
+        function resetSecurityForm() {
+            document.getElementById('current_password').value = '';
+            document.getElementById('new_password').value = '';
+            document.getElementById('confirm_password').value = '';
+            
+            // Reset password requirements
+            const requirementElements = document.querySelectorAll('.requirement');
+            requirementElements.forEach(element => {
+                element.classList.remove('valid', 'invalid');
+            });
+            
+            clearFieldErrors('current_password', 'new_password', 'confirm_password');
+            hideValidationMessage('securityValidation');
+        }
 
         // Clear error styling on input
         document.querySelectorAll('input').forEach(field => {
             field.addEventListener('input', function() {
-                this.style.borderColor = 'var(--line)';
+                this.classList.remove('field-error', 'field-success');
             });
         });
+        
+        // Clear validation messages when user starts typing in any field
+        document.getElementById('phone').addEventListener('input', function() {
+            if (this.value.trim()) {
+                hideValidationMessage('personalInfoValidation');
+                clearFieldErrors('phone');
+            }
+        });
+        
+        document.getElementById('address').addEventListener('input', function() {
+            if (this.value.trim()) {
+                hideValidationMessage('personalInfoValidation');
+                clearFieldErrors('address');
+            }
+        });
+        
+        document.getElementById('current_password').addEventListener('input', function() {
+            if (this.value) {
+                hideValidationMessage('securityValidation');
+                clearFieldErrors('current_password');
+            }
+        });
+    </script>
                                                                                                                                                                                         

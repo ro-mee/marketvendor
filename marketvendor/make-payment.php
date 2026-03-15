@@ -230,6 +230,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin: 0;
         }
 
+        /* Better viewport handling */
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+        
+        body {
+            min-height: 100vh;
+        }
+        
+        .layout {
+            min-height: 100vh;
+        }
+        
+        .content-wrap {
+            padding-bottom: 20px;
+            overflow-x: hidden;
+        }
+        
+        .main-content {
+            padding: 20px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
         .nav-section-title {
             color: var(--text-200);
             font-size: 0.75rem;
@@ -361,6 +386,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 100%;
             margin: 0;
             padding: 0;
+            max-width: 100%;
         }
         
         .payment-card {
@@ -369,6 +395,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: var(--card-radius);
             padding: 24px;
             margin-bottom: 30px;
+            max-width: 100%;
+            box-sizing: border-box;
         }
         
         .payment-header {
@@ -466,43 +494,609 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         .payment-methods {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
             margin-bottom: 25px;
         }
         
         .method-option {
             position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .method-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
         
         .method-option label {
-            display: block;
-            padding: 15px;
-            background: rgba(15, 39, 75, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            background: linear-gradient(145deg, rgba(15, 39, 75, 0.9), rgba(30, 41, 59, 0.8));
             border: 2px solid var(--line);
-            border-radius: 8px;
+            border-radius: 16px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             color: var(--text-300);
             font-weight: 600;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 120px;
+        }
+        
+        .method-option label::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+        
+        .method-option label::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: all 0.6s ease;
+            transform: scale(0);
+            z-index: 0;
         }
         
         .method-option input[type="radio"]:checked + label {
-            background: rgba(59, 130, 246, 0.2);
+            background: linear-gradient(145deg, rgba(59, 130, 246, 0.25), rgba(37, 99, 235, 0.15));
             border-color: var(--primary);
             color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(59, 130, 246, 0.3), 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+        
+        .method-option input[type="radio"]:checked + label::before {
+            opacity: 1;
+        }
+        
+        .method-option input[type="radio"]:checked + label::after {
+            opacity: 1;
+            transform: scale(1);
         }
         
         .method-option label:hover {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: var(--primary);
+            background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.08));
+            border-color: rgba(59, 130, 246, 0.5);
+            color: var(--text-100);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        .method-option label:hover::before {
+            opacity: 0.7;
         }
         
         .method-option i {
             display: block;
-            font-size: 1.5rem;
-            margin-bottom: 8px;
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .method-option input[type="radio"]:checked + label i {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
+        }
+        
+        .method-option label:hover i {
+            transform: scale(1.05);
+        }
+        
+        .method-option .method-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .method-option .method-description {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .method-option input[type="radio"]:checked + label .method-description {
+            opacity: 0.9;
+        }
+        
+        /* Payment method specific colors */
+        .method-option:nth-child(1) input[type="radio"]:checked + label {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+        
+        .method-option:nth-child(2) input[type="radio"]:checked + label {
+            border-color: #10b981;
+            color: #10b981;
+        }
+        
+        .method-option:nth-child(3) input[type="radio"]:checked + label {
+            border-color: #f59e0b;
+            color: #f59e0b;
+        }
+        
+        /* Enhanced selection indicator */
+        .method-option input[type="radio"]:checked + label::before {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 2;
+            opacity: 1;
+            transform: scale(1);
+            animation: checkmarkPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes checkmarkPop {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(10deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        
+        /* Loading state for payment methods */
+        .method-option.loading label {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        
+        .method-option.loading label::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+        
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .payment-methods {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 18px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .payment-methods {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                margin-bottom: 20px;
+            }
+            
+            .method-option label {
+                padding: 20px 16px;
+                min-height: 100px;
+            }
+            
+            .method-option i {
+                font-size: 2rem;
+                margin-bottom: 10px;
+            }
+            
+            .payment-card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            .pay-button {
+                padding: 12px 24px;
+                font-size: 1rem;
+                margin-top: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .payment-methods {
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+            
+            .method-option label {
+                padding: 16px 12px;
+                min-height: 90px;
+            }
+            
+            .method-option i {
+                font-size: 1.8rem;
+                margin-bottom: 8px;
+            }
+            
+            .method-option .method-name {
+                font-size: 0.9rem;
+            }
+            
+            .method-option .method-description {
+                font-size: 0.7rem;
+            }
+            
+            .payment-card {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+            
+            .payment-header {
+                margin-bottom: 20px;
+                padding-bottom: 12px;
+            }
+            
+            .payment-header h2 {
+                font-size: 1.1rem;
+            }
+            
+            .payment-header p {
+                font-size: 0.85rem;
+            }
+            
+            .form-group {
+                margin-bottom: 16px;
+            }
+            
+            .form-group label {
+                font-size: 0.9rem;
+                margin-bottom: 6px;
+            }
+            
+            .form-group input,
+            .form-group select {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+            
+            .pay-button {
+                padding: 14px 20px;
+                font-size: 0.95rem;
+                width: 100%;
+                margin-top: 16px;
+            }
+            
+            .payment-details {
+                margin-bottom: 20px;
+            }
+            
+            .detail-row {
+                padding: 12px 0;
+            }
+            
+            .detail-label {
+                font-size: 0.9rem;
+            }
+            
+            .detail-value {
+                font-size: 1rem;
+            }
+            
+            .amount-due {
+                font-size: 1.3rem;
+            }
+        }
+        
+        /* Enhanced Sticky Button System */
+        .payment-form-wrapper {
+            position: relative;
+            padding-bottom: 100px;
+            min-height: 100%;
+        }
+        
+        .sticky-payment-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to up, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.95));
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--line);
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sticky-payment-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        
+        .payment-summary {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: var(--text-100);
+        }
+        
+        .payment-amount-display {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .payment-amount-label {
+            font-size: 0.75rem;
+            color: var(--text-300);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        
+        .payment-amount-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        .payment-method-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--primary);
+        }
+        
+        .sticky-pay-button {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            position: relative;
+            overflow: hidden;
+            min-width: 200px;
+        }
+        
+        .sticky-pay-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .sticky-pay-button:hover::before {
+            left: 100%;
+        }
+        
+        .sticky-pay-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+        
+        .sticky-pay-button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .sticky-pay-button.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        
+        .sticky-pay-button.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+        
+        .sticky-pay-button.loading .button-text {
+            opacity: 0;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        /* Hide original button when sticky is active */
+        .original-pay-button {
+            display: none;
+        }
+        
+        /* Responsive sticky footer */
+        @media (max-width: 768px) {
+            .sticky-payment-footer {
+                padding: 16px;
+            }
+            
+            .sticky-payment-content {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+            
+            .payment-summary {
+                flex-direction: column;
+                gap: 12px;
+                width: 100%;
+            }
+            
+            .payment-amount-display {
+                align-items: center;
+            }
+            
+            .sticky-pay-button {
+                width: 100%;
+                padding: 14px 24px;
+                font-size: 0.95rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .sticky-payment-footer {
+                padding: 12px;
+            }
+            
+            .payment-amount-value {
+                font-size: 1.1rem;
+            }
+            
+            .payment-method-display {
+                font-size: 0.8rem;
+                padding: 6px 10px;
+            }
+            
+            .sticky-pay-button {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(59, 130, 246, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .scroll-indicator.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .scroll-indicator:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+        
+        /* Extra small screens */
+        @media (max-width: 360px) {
+            .payment-methods {
+                gap: 10px;
+            }
+            
+            .method-option label {
+                padding: 14px 10px;
+                min-height: 80px;
+            }
+            
+            .method-option i {
+                font-size: 1.6rem;
+                margin-bottom: 6px;
+            }
+            
+            .method-option .method-name {
+                font-size: 0.85rem;
+            }
+            
+            .method-option .method-description {
+                font-size: 0.65rem;
+            }
+            
+            .payment-card {
+                padding: 12px;
+            }
+            
+            .pay-button {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
         }
         
         .pay-button {
@@ -563,88 +1157,388 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: rgba(30, 41, 59, 0.5);
         }
         
-        /* Modal Styles */
+        /* Modal Styles - Professional Enhancement */
         .modal {
             display: none;
             position: fixed;
-            z-index: 500;
+            z-index: 5000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(15, 23, 42, 0.9));
+            backdrop-filter: blur(20px);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                backdrop-filter: blur(0px);
+            }
+            to {
+                opacity: 1;
+                backdrop-filter: blur(20px);
+            }
         }
         
         .modal-content {
-            background: rgba(30, 41, 59, 0.95);
-            border: 1px solid var(--line);
-            border-radius: var(--card-radius);
-            margin: 10% auto;
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.95));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            margin: 5% auto;
             padding: 0;
             width: 90%;
-            max-width: 500px;
+            max-width: 520px;
             height: auto;
-            animation: modalSlideIn 0.3s ease-out;
+            max-height: 85vh;
+            overflow: visible;
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(59, 130, 246, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(59, 130, 246, 0.5), 
+                transparent
+            );
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
         
         @keyframes modalSlideIn {
             from {
                 opacity: 0;
-                transform: translateY(-50px);
+                transform: translateY(-30px) scale(0.95);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
         
         .modal-header {
-            padding: 24px;
-            border-bottom: 1px solid var(--line);
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, 
+                rgba(59, 130, 246, 0.05), 
+                transparent
+            );
+            border-radius: 20px 20px 0 0;
+            position: relative;
+        }
+        
+        .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            right: 20px;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                rgba(59, 130, 246, 0.3), 
+                transparent,
+                rgba(59, 130, 246, 0.3)
+            );
         }
         
         .modal-header h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
+            font-size: 1.4rem;
+            font-weight: 700;
             color: var(--text-100);
             margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .modal-close {
-            background: none;
-            border: none;
-            color: var(--text-300);
-            font-size: 1.5rem;
+            background: linear-gradient(145deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            font-size: 1.2rem;
             cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .modal-close::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .modal-close:hover::before {
+            left: 100%;
         }
         
         .modal-close:hover {
-            color: var(--text-100);
-            background: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(145deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
         
         .modal-body {
             padding: 20px;
+            overflow: visible;
+            flex: 1;
+            max-height: calc(85vh - 80px);
+            background: linear-gradient(180deg, 
+                transparent,
+                rgba(15, 23, 42, 0.3)
+            );
         }
         
-        /* Modal form spacing adjustments */
+        /* Professional Modal Form Styles - Compact */
         .modal-body .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        
+        .modal-body .form-group label {
+            display: block;
+            color: #60a5fa;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .modal-body .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            background: linear-gradient(145deg, 
+                rgba(15, 39, 75, 0.9), 
+                rgba(30, 41, 59, 0.8)
+            );
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 10px;
+            color: var(--text-100);
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .modal-body .form-group input:focus {
+            outline: none;
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 
+                0 0 0 3px rgba(59, 130, 246, 0.1),
+                0 2px 8px rgba(59, 130, 246, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .modal-body .form-group input::placeholder {
+            color: rgba(148, 163, 184, 0.5);
+        }
+        
+        .modal-body .payment-methods {
+            gap: 12px;
+            margin-bottom: 16px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .modal-body .method-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 12px;
+            background: linear-gradient(145deg, 
+                rgba(15, 39, 75, 0.8), 
+                rgba(30, 41, 59, 0.6)
+            );
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-300);
+            font-weight: 600;
+            font-size: 0.85rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 75px;
+        }
+        
+        .modal-body .method-option input[type="radio"]:checked + label {
+            background: linear-gradient(145deg, 
+                rgba(59, 130, 246, 0.25), 
+                rgba(37, 99, 235, 0.15)
+            );
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 12px rgba(59, 130, 246, 0.3),
+                0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+        
+        .modal-body .method-option label:hover {
+            background: linear-gradient(145deg, 
+                rgba(59, 130, 246, 0.15), 
+                rgba(37, 99, 235, 0.08)
+            );
+            border-color: rgba(59, 130, 246, 0.4);
+            color: var(--text-100);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-body .method-option i {
+            display: block;
+            font-size: 1.6rem;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-body .method-option input[type="radio"]:checked + label i {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.5));
+        }
+        
+        .modal-body .method-option label:hover i {
+            transform: scale(1.05);
         }
         
         .modal-body .form-buttons {
-            margin-top: 10px;
+            margin-top: 18px;
+            gap: 12px;
+            display: flex;
         }
         
         .modal-body .selected-payment-info {
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: linear-gradient(145deg, 
+                rgba(59, 130, 246, 0.05), 
+                rgba(37, 99, 235, 0.02)
+            );
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            border-radius: 10px;
+        }
+        
+        .modal-body .btn-pay {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            flex: 1;
+        }
+        
+        .modal-body .btn-pay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.2), 
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+        
+        .modal-body .btn-pay:hover::before {
+            left: 100%;
+        }
+        
+        .modal-body .btn-pay:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+        
+        .modal-body .btn-cancel {
+            background: linear-gradient(145deg, 
+                rgba(100, 116, 139, 0.8), 
+                rgba(71, 85, 105, 0.6)
+            );
+            color: white;
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 1;
+        }
+        
+        .modal-body .btn-cancel:hover {
+            background: linear-gradient(145deg, 
+                rgba(71, 85, 105, 0.8), 
+                rgba(51, 65, 85, 0.6)
+            );
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        @media (max-width: 480px) {
+            .modal-content {
+                margin: 2% auto;
+                width: 98%;
+                max-height: 92vh;
+            }
+        }
+        
+        @media (max-height: 600px) {
+            .modal-content {
+                margin: 2% auto;
+                max-height: 95vh;
+            }
         }
         
         .btn-pay {
@@ -948,105 +1842,135 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="payment-container">
                 <?php if ($payment): ?>
                     <!-- Specific Payment Mode -->
-                    <div class="payment-card">
-                        <div class="payment-header">
-                            <h2>Make Payment</h2>
-                            <p>Loan <?php echo htmlspecialchars($payment['loan_id']); ?></p>
-                        </div>
+                    <div class="payment-form-wrapper">
+                        <div class="payment-card">
+                            <div class="payment-header">
+                                <h2>Make Payment</h2>
+                                <p>Loan <?php echo htmlspecialchars($payment['loan_id']); ?></p>
+                            </div>
 
-                        <?php if (isset($error)): ?>
-                            <div class="error-message">
-                                <?php echo htmlspecialchars($error); ?>
-                            </div>
-                        <?php endif; ?>
+                            <?php if (isset($error)): ?>
+                                <div class="error-message">
+                                    <?php echo htmlspecialchars($error); ?>
+                                </div>
+                            <?php endif; ?>
 
-                        <div class="payment-details">
-                            <div class="detail-row">
-                                <span class="detail-label">Borrower</span>
-                                <span class="detail-value"><?php echo htmlspecialchars($payment['full_name']); ?></span>
+                            <div class="payment-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">Borrower</span>
+                                    <span class="detail-value"><?php echo htmlspecialchars($payment['full_name']); ?></span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Due Date</span>
+                                    <span class="detail-value"><?php echo date('F d, Y', strtotime($payment['due_date'])); ?></span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Amount Due</span>
+                                    <span class="detail-value amount-due">
+                                        ₱<?php echo number_format($payment['total_amount'], 2); ?>
+                                        <?php
+                                        // Calculate and show late fees if overdue
+                                        $due_date = new DateTime($payment['due_date']);
+                                        $today = new DateTime();
+                                        $days_overdue = 0;
+                                        if ($due_date < $today) {
+                                            $days_overdue = -($today->diff($due_date)->days);
+                                            $late_fee_calculation = $lateFeeManager->calculateLateFee($payment['total_amount'], $days_overdue, $payment['payment_id']);
+                                            if (is_array($late_fee_calculation) && $late_fee_calculation['fee_amount'] > 0) {
+                                                echo '<br><small style="color: #ef4444;">+ Late Fee: ₱' . number_format($late_fee_calculation['fee_amount'], 2) . '</small>';
+                                                echo '<br><strong style="color: #10b981;">Total: ₱' . number_format($payment['total_amount'] + $late_fee_calculation['fee_amount'], 2) . '</strong>';
+                                            }
+                                        }
+                                        ?>
+                                    </span>
+                                </div>
                             </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Due Date</span>
-                                <span class="detail-value"><?php echo date('F d, Y', strtotime($payment['due_date'])); ?></span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Amount Due</span>
-                                <span class="detail-value amount-due">
-                                    ₱<?php echo number_format($payment['total_amount'], 2); ?>
+
+                            <form method="POST" action="" id="paymentForm">
+                                <input type="hidden" name="loan_id" value="<?php echo htmlspecialchars($payment['loan_id']); ?>">
+                                <input type="hidden" name="payment_id" value="<?php echo htmlspecialchars($payment['payment_id']); ?>">
+                                
+                                <div class="form-group">
+                                    <label for="payment_amount">Payment Amount (₱)</label>
                                     <?php
-                                    // Calculate and show late fees if overdue
+                                    // Calculate total amount with late fees
+                                    $total_payment_amount = $payment['total_amount'];
                                     $due_date = new DateTime($payment['due_date']);
                                     $today = new DateTime();
-                                    $days_overdue = 0;
                                     if ($due_date < $today) {
                                         $days_overdue = -($today->diff($due_date)->days);
                                         $late_fee_calculation = $lateFeeManager->calculateLateFee($payment['total_amount'], $days_overdue, $payment['payment_id']);
                                         if (is_array($late_fee_calculation) && $late_fee_calculation['fee_amount'] > 0) {
-                                            echo '<br><small style="color: #ef4444;">+ Late Fee: ₱' . number_format($late_fee_calculation['fee_amount'], 2) . '</small>';
-                                            echo '<br><strong style="color: #10b981;">Total: ₱' . number_format($payment['total_amount'] + $late_fee_calculation['fee_amount'], 2) . '</strong>';
+                                            $total_payment_amount += $late_fee_calculation['fee_amount'];
                                         }
                                     }
                                     ?>
-                                </span>
-                            </div>
-                        </div>
+                                    <input type="number" id="payment_amount" name="payment_amount" 
+                                           value="<?php echo htmlspecialchars($total_payment_amount); ?>"
+                                           min="0.01" max="<?php echo htmlspecialchars($total_payment_amount); ?>" 
+                                           step="0.01" required>
+                                    <?php if ($total_payment_amount > $payment['total_amount']): ?>
+                                    <small style="color: #10b981; font-weight: 500;">Includes late fees</small>
+                                    <?php endif; ?>
+                                </div>
 
-                        <form method="POST" action="">
-                            <input type="hidden" name="loan_id" value="<?php echo htmlspecialchars($payment['loan_id']); ?>">
-                            <input type="hidden" name="payment_id" value="<?php echo htmlspecialchars($payment['payment_id']); ?>">
-                            
-                            <div class="form-group">
-                                <label for="payment_amount">Payment Amount (₱)</label>
-                                <?php
-                                // Calculate total amount with late fees
-                                $total_payment_amount = $payment['total_amount'];
-                                $due_date = new DateTime($payment['due_date']);
-                                $today = new DateTime();
-                                if ($due_date < $today) {
-                                    $days_overdue = -($today->diff($due_date)->days);
-                                    $late_fee_calculation = $lateFeeManager->calculateLateFee($payment['total_amount'], $days_overdue, $payment['payment_id']);
-                                    if (is_array($late_fee_calculation) && $late_fee_calculation['fee_amount'] > 0) {
-                                        $total_payment_amount += $late_fee_calculation['fee_amount'];
-                                    }
-                                }
-                                ?>
-                                <input type="number" id="payment_amount" name="payment_amount" 
-                                       value="<?php echo htmlspecialchars($total_payment_amount); ?>"
-                                       min="0.01" max="<?php echo htmlspecialchars($total_payment_amount); ?>" 
-                                       step="0.01" required>
-                                <?php if ($total_payment_amount > $payment['total_amount']): ?>
-                                <small style="color: #10b981; font-weight: 500;">Includes late fees</small>
-                                <?php endif; ?>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Payment Method</label>
-                                <div class="payment-methods">
-                                    <div class="method-option">
-                                        <input type="radio" id="bank_transfer" name="payment_method" value="bank_transfer" checked>
-                                        <label for="bank_transfer">
-                                            <i class="fas fa-university"></i> Bank Transfer
-                                        </label>
-                                    </div>
-                                    <div class="method-option">
-                                        <input type="radio" id="gcash" name="payment_method" value="gcash">
-                                        <label for="gcash">
-                                            <i class="fas fa-mobile-alt"></i> GCash
-                                        </label>
-                                    </div>
-                                    <div class="method-option">
-                                        <input type="radio" id="maya" name="payment_method" value="maya">
-                                        <label for="maya">
-                                            <i class="fas fa-wallet"></i> Maya
-                                        </label>
+                                <div class="form-group">
+                                    <label>Payment Method</label>
+                                    <div class="payment-methods">
+                                        <div class="method-option">
+                                            <input type="radio" id="bank_transfer" name="payment_method" value="bank_transfer" checked>
+                                            <label for="bank_transfer">
+                                                <i class="fas fa-university"></i>
+                                                <span class="method-name">Bank Transfer</span>
+                                                <span class="method-description">Direct bank deposit</span>
+                                            </label>
+                                        </div>
+                                        <div class="method-option">
+                                            <input type="radio" id="gcash" name="payment_method" value="gcash">
+                                            <label for="gcash">
+                                                <i class="fas fa-mobile-alt"></i>
+                                                <span class="method-name">GCash</span>
+                                                <span class="method-description">Mobile wallet</span>
+                                            </label>
+                                        </div>
+                                        <div class="method-option">
+                                            <input type="radio" id="maya" name="payment_method" value="maya">
+                                            <label for="maya">
+                                                <i class="fas fa-wallet"></i>
+                                                <span class="method-name">Maya</span>
+                                                <span class="method-description">Digital wallet</span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <button type="submit" class="pay-button">
-                                <i class="fas fa-credit-card"></i> Process Payment
+                                <!-- Original button (hidden when sticky is active) -->
+                                <button type="submit" class="pay-button original-pay-button">
+                                    <i class="fas fa-credit-card"></i> Process Payment
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced Sticky Payment Footer -->
+                    <div class="sticky-payment-footer">
+                        <div class="sticky-payment-content">
+                            <div class="payment-summary">
+                                <div class="payment-amount-display">
+                                    <span class="payment-amount-label">Total Amount</span>
+                                    <span class="payment-amount-value" id="stickyAmount">₱<?php echo number_format($total_payment_amount ?? $payment['total_amount'], 2); ?></span>
+                                </div>
+                                <div class="payment-method-display" id="stickyMethod">
+                                    <i class="fas fa-university"></i>
+                                    <span>Bank Transfer</span>
+                                </div>
+                            </div>
+                            <button type="submit" form="paymentForm" class="sticky-pay-button" id="stickyPayButton">
+                                <span class="button-text">
+                                    <i class="fas fa-credit-card"></i> Process Payment
+                                </span>
                             </button>
-                        </form>
+                        </div>
                     </div>
                 <?php else: ?>
                     <!-- Loan Selection Mode - Table Format -->
@@ -1320,6 +2244,12 @@ foreach ($available_payments as $loan_id => $loan) {
 
     <script>
         function showPaymentForm(loanId, paymentId, amount, dueDate) {
+            // Hide the main header when modal opens
+            const mainHeader = document.querySelector('.header');
+            if (mainHeader) {
+                mainHeader.style.display = 'none';
+            }
+            
             // Set form values
             document.getElementById('modal_loan_id').value = loanId;
             document.getElementById('modal_payment_id').value = paymentId;
@@ -1352,6 +2282,12 @@ foreach ($available_payments as $loan_id => $loan) {
         }
         
         function closePaymentModal() {
+            // Show the main header when modal closes
+            const mainHeader = document.querySelector('.header');
+            if (mainHeader) {
+                mainHeader.style.display = 'flex';
+            }
+            
             document.getElementById('paymentModal').style.display = 'none';
         }
         
@@ -1366,18 +2302,174 @@ foreach ($available_payments as $loan_id => $loan) {
         // Close modal with Escape key
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
-                closePaymentModal();
+                const modal = document.getElementById('paymentModal');
+                if (modal && modal.style.display === 'block') {
+                    closePaymentModal();
+                }
             }
         });
         
-        // Update payment method when radio buttons change
+        // Enhanced Sticky Footer Functionality
         document.addEventListener('DOMContentLoaded', function() {
             const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+            const paymentAmountInput = document.getElementById('payment_amount');
+            const stickyAmount = document.getElementById('stickyAmount');
+            const stickyMethod = document.getElementById('stickyMethod');
+            const stickyPayButton = document.getElementById('stickyPayButton');
+            const scrollIndicator = document.createElement('div');
+            scrollIndicator.className = 'scroll-indicator';
+            scrollIndicator.innerHTML = '<i class="fas fa-arrow-up"></i>';
+            document.body.appendChild(scrollIndicator);
+            
+            // Update sticky method display
             paymentMethods.forEach(function(radio) {
                 radio.addEventListener('change', function() {
-                    document.getElementById('modal_payment_method').value = this.value;
+                    const methodData = {
+                        'bank_transfer': { icon: 'fas fa-university', name: 'Bank Transfer' },
+                        'gcash': { icon: 'fas fa-mobile-alt', name: 'GCash' },
+                        'maya': { icon: 'fas fa-wallet', name: 'Maya' }
+                    };
+                    
+                    const selectedMethod = methodData[this.value];
+                    stickyMethod.innerHTML = `
+                        <i class="${selectedMethod.icon}"></i>
+                        <span>${selectedMethod.name}</span>
+                    `;
+                    
+                    // Add loading animation
+                    const methodOptions = document.querySelectorAll('.method-option');
+                    methodOptions.forEach(option => option.classList.remove('loading'));
+                    
+                    if (this.checked) {
+                        const selectedOption = this.closest('.method-option');
+                        selectedOption.classList.add('loading');
+                        
+                        setTimeout(() => {
+                            selectedOption.classList.remove('loading');
+                        }, 300);
+                    }
                 });
             });
+            
+            // Update sticky amount display
+            if (paymentAmountInput) {
+                paymentAmountInput.addEventListener('input', function() {
+                    const amount = parseFloat(this.value) || 0;
+                    stickyAmount.textContent = '₱' + amount.toFixed(2);
+                });
+            }
+            
+            // Handle form submission with loading state
+            const paymentForm = document.getElementById('paymentForm');
+            if (paymentForm) {
+                paymentForm.addEventListener('submit', function(e) {
+                    // Add loading state to sticky button
+                    stickyPayButton.classList.add('loading');
+                    stickyPayButton.disabled = true;
+                    
+                    // Disable all form inputs
+                    const inputs = this.querySelectorAll('input, button');
+                    inputs.forEach(input => input.disabled = true);
+                    
+                    // Re-enable after 5 seconds (fallback)
+                    setTimeout(() => {
+                        stickyPayButton.classList.remove('loading');
+                        stickyPayButton.disabled = false;
+                        inputs.forEach(input => input.disabled = false);
+                    }, 5000);
+                });
+            }
+            
+            // Scroll indicator functionality
+            let lastScrollTop = 0;
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight;
+                const clientHeight = document.documentElement.clientHeight;
+                const scrollPercentage = (scrollTop / (scrollHeight - clientHeight)) * 100;
+                
+                // Show scroll indicator when not at top
+                if (scrollTop > 200) {
+                    scrollIndicator.classList.add('show');
+                } else {
+                    scrollIndicator.classList.remove('show');
+                }
+                
+                // Update scroll indicator rotation based on scroll direction
+                if (scrollTop > lastScrollTop) {
+                    scrollIndicator.style.transform = 'scale(1) rotate(180deg)';
+                } else {
+                    scrollIndicator.style.transform = 'scale(1) rotate(0deg)';
+                }
+                
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            });
+            
+            // Scroll to top when indicator is clicked
+            scrollIndicator.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // Add ripple effect to sticky button
+            stickyPayButton.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.3);
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                    z-index: 1;
+                `;
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+            
+            // Add CSS for ripple animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Auto-hide sticky footer on very large screens
+            function checkStickyFooter() {
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+                const stickyFooter = document.querySelector('.sticky-payment-footer');
+                
+                if (windowHeight >= documentHeight - 100) {
+                    stickyFooter.style.position = 'relative';
+                    stickyFooter.style.width = '100%';
+                } else {
+                    stickyFooter.style.position = 'fixed';
+                    stickyFooter.style.width = '';
+                }
+            }
+            
+            checkStickyFooter();
+            window.addEventListener('resize', checkStickyFooter);
         });
         
         // Show receipt modal if payment was successful
